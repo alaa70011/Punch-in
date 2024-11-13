@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Office Working Hours</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: 	#000000;
+            font-family: Roboto;
+            margin: 0;
+        }
+        .container {
+            background-color: 	#FFFFFF;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 350px;
+            width: 100%;
+        }
+        h1 {
+            color: #ff0000;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+        }
+        #timer {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        #punchButton {
+            font-size: 1.2em;
+            padding: 15px 30px;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        #punchButton.active {
+            background-color: #ff0000;
+        }
+        #punchButton:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>
+            Office Working Hours 
+            <img src="Vodafone logo" alt="Vodafone Logo" width="60">
+        </h1>
+        <div id="timer">8:30:00</div>
+        <button id="punchButton" onclick="toggleTimer()">Punch In</button>
+    </div>
+    
+    <script>
+        let interval;
+        let breakNotificationInterval;
+        let isRunning = false; // To track if the timer is running
+        let time = 8.5 * 60 * 60; // Initial time: 8 hours and 30 minutes in seconds
+
+        function toggleTimer() {
+            const button = document.getElementById("punchButton");
+            
+            if (!isRunning) {
+                // Start the timer
+                button.classList.add("active");
+                button.innerHTML = "Stop";
+                startTimer();
+                isRunning = true;
+            } else {
+                // Stop the timer
+                button.classList.remove("active");
+                button.innerHTML = "Resume";
+                stopTimer();
+                isRunning = false;
+            }
+        }
+
+        function startTimer() {
+            const timerDisplay = document.getElementById("timer");
+
+            interval = setInterval(() => {
+                const hours = Math.floor(time / 3600);
+                const minutes = Math.floor((time % 3600) / 60);
+                const seconds = time % 60;
+                timerDisplay.innerHTML = `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                if (time <= 0) {
+                    clearInterval(interval);
+                    alert("Time is up!");
+                    document.getElementById("punchButton").innerHTML = "Punch In";
+                    isRunning = false;
+                }
+                time--;
+            }, 1000);
+
+            // Break reminder every hour
+            let breakReminder = 60 * 60;
+            breakNotificationInterval = setInterval(() => {
+                if (breakReminder <= time) {
+                    alert("It's time to take a 10-minute break!");
+                }
+            }, breakReminder * 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(interval);
+            clearInterval(breakNotificationInterval);
+        }
+    </script>
+</body>
+</html>
